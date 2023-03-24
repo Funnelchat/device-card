@@ -1,1 +1,106 @@
 /* Nova Card CSS */
+
+.m-1{
+    margin: 1rem;
+}
+
+.xs-font {
+    font-size: x-small !important;
+}
+
+.icon-cant-queue {
+    background: #ffb946;
+    color: white;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 99999px;
+    font-size: smaller;
+}
+
+.center-icon-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wpp-container {
+    border-radius: 5rem;
+}
+
+.material-design-icon,
+.actionButton>.material-design-icon__svg {
+    width: 20px !important;
+    height: 20px !important;
+    padding-bottom: 0.2rem;
+    margin-right: 0.2rem;
+}
+
+.arrow-icon {
+    padding-bottom: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Modal styles*/
+
+/* Demo Styles */
+
+.container-alert {
+    min-height: 35px;
+    bottom: -27px;
+}
+
+.status-auth-loading-alert {
+    border-radius: 5px;
+    box-shadow: 1px 1px 9px 1px rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+}
+
+.alert-message .status-auth-loading-alert div {
+    padding: 3px 5px;
+    background: #00ff2829;
+    color: #296713;
+    border-radius: 5px;
+}
+
+.alert-message.alert-error .status-auth-loading-alert div {
+    padding: 3px 5px;
+    background: #ff000047;
+    color: #891a1a;
+    border-radius: 5px;
+}
+
+.mdi-icon {
+    width: 30px !important;
+    height: 30px !important;
+    display: inline-flex;
+    align-self: center;
+    position: relative;
+}
+
+.auth-label {
+    width: 100%;
+    padding: 5px 10px;
+    border-radius: 1rem;
+    font-size: 13px;
+    font-weight: bold;
+    background-color: #d3d3d340;
+}
+
+.auth-green {
+    background-color: #b7f3b7;
+    color: green;
+}
+
+.auth-yellow {
+    background-color: #ffef67a3;
+    color: #b98201;
+}
+
+.auth-red {
+    background-color: #ff676740;
+    color: #d81818;
+}
+
+

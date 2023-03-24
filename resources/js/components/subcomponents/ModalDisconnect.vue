@@ -1,9 +1,17 @@
 <template>
-    <div class="modal-small modal-window fixed ">
+    <div class="modal-small modal-window fixed">
         <div class="absolute p-8 bg-white">
             <div v-if="!loading_disconnect" class="modal-body-c pb-8">
-               <h3 class="mb-4 font-semibold">{{ __("Attention!") }}</h3>
-                <p class="text-justify">{{ __("It will disconnect Funnelchat account from your phone. You will need to scan a QR code again") }}.</p>
+                <h3 class="mb-4 font-semibold text-base">
+                    {{ __("Attention!") }}
+                </h3>
+                <p class="text-justify">
+                    {{
+                        __(
+                            "It will disconnect Funnelchat account from your phone. You will need to scan a QR code again"
+                        )
+                    }}.
+                </p>
             </div>
             <div
                 v-if="!loading_disconnect"
@@ -16,7 +24,7 @@
                     {{ __("Cancel") }}
                 </button>
                 <button
-                    class=" cursor-pointer btn btn-default btn-primary"
+                    class="cursor-pointer btn btn-default btn-primary"
                     @click="disconnect"
                 >
                     {{ __("Disconnect your WhatsApp") }}
@@ -35,24 +43,20 @@
 import CloseIcon from "vue-material-design-icons/Close.vue";
 
 export default {
-    props: {
-        loading_disconnect: Boolean
+    props: ["loading_disconnect"],
+
+    components: {
+        CloseIcon,
     },
-    data() {
-        return {};
-    },
+
     methods: {
         hideModalDisconnect() {
             this.$emit("hideModalDisconnect");
         },
         disconnect() {
             this.$emit("disconnect");
-            //Disconnect
-        }
+        },
     },
-    components: {
-        CloseIcon
-    }
 };
 </script>
 <style lang="css" scoped>
@@ -74,7 +78,6 @@ export default {
     border-radius: 5px;
 }
 /* Demo Styles */
-
 
 .modal-small .modal-body-c {
     overflow: visible;

@@ -1,33 +1,36 @@
 <template>
   <div class="modal-small modal-window fixed">
-    <div class="absolute p-8 bg-white">
-      <div class="modal-body-c pb-8">
-        <h3 class="mb-4 font-semibold">{{ __("Messages Queue!") }}</h3>
-        <p class="text-justify">
-          <span v-if="cant_queue_messages < 1"
-            >{{ __("You don't have any messages in queue") }}.
-          </span>
-          <span v-else>
-           {{__('You have')}} <b>{{ cant_queue_messages }}</b> {{ __("in queue") }}.
-          </span>
-        </p>
+      <div class="absolute p-8 bg-white">
+          <div class="modal-body-c pb-8">
+              <h3 class="mb-4 font-semibold text-base">
+                  {{ __("Messages Queue!") }}
+              </h3>
+              <p class="text-justify">
+                  <span v-if="cant_queue_messages < 1"
+                      >{{ __("You don't have any messages in queue") }}.
+                  </span>
+                  <span v-else>
+                      {{ __("You have") }} <b>{{ cant_queue_messages }}</b>
+                      {{ __("in queue") }}.
+                  </span>
+              </p>
+          </div>
+          <div class="modal-footer flex justify-end">
+              <button
+                  class="btn btn-icon btn-default btn-white cursor-pointer mr-2"
+                  @click="hideModalMessagesQueue"
+              >
+                  {{ __("Cancel") }}
+              </button>
+              <button
+                  v-if="cant_queue_messages > 0"
+                  class="cursor-pointer btn btn-default btn-primary"
+                  @click="clearMessagesQueue"
+              >
+                  {{ __("Clear") }}
+              </button>
+          </div>
       </div>
-      <div class="modal-footer flex justify-end">
-        <button
-          class="btn btn-icon btn-default btn-white cursor-pointer mr-2"
-          @click="hideModalMessagesQueue"
-        >
-          {{ __("Cancel") }}
-        </button>
-        <button
-          v-if="cant_queue_messages > 0"
-          class="cursor-pointer btn btn-default btn-primary"
-          @click="clearMessagesQueue"
-        >
-          {{ __("Clear") }}
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 <script>
@@ -35,19 +38,17 @@ import CloseIcon from "vue-material-design-icons/Close.vue";
 
 export default {
   props: ["cant_queue_messages"],
-
-  methods: {
-    hideModalMessagesQueue() {
-      this.$emit("hideModalMessagesQueue");
-    },
-    clearMessagesQueue() {
-      this.$emit("clearMessagesQueue");
-    },
-  },
   components: {
-    CloseIcon,
+      CloseIcon,
   },
-  computed: {},
+  methods: {
+      hideModalMessagesQueue() {
+          this.$emit("hideModalMessagesQueue");
+      },
+      clearMessagesQueue() {
+          this.$emit("clearMessagesQueue");
+      },
+  },
 };
 </script>
 <style lang="css" scoped>
