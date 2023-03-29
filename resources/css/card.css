@@ -236,11 +236,6 @@ svg {
   height: 1rem;
 }
 
-.sidebar-icon path {
-  fill: white;
-  color: white;
-}
-
 /*.bg-grad-sidebar a.router-link-exact-active {
   font-weight: bold;
   color: white;
