@@ -236,7 +236,7 @@ export default {
                 this.suspended_qr = false;
             }
             await Nova.request()
-                .get(`${this.webhook_url}${this.instance_code}/status`, {
+                .get(`${this.webhook_url}${this.device_id}/status`, {
                     params: { on },
                 })
                 .then(({ data }) => {
