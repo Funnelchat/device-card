@@ -363,7 +363,7 @@ export default {
         async disconnect() {
             const url = `${this.wapi_url}${this.instance_code}/logout?token=${this.token}`;
             await Nova.request()
-                .post(url)
+                .get(url)
                 .then((response) => {
                     this.show_modal_disconnect = false;
                     if (response.status == 200) {
