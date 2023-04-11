@@ -138,7 +138,7 @@ export default {
         this.suspended_qr = false;
         this.official_status = this.card.official_status;
         this.wapi_url = `${this.card.wapi_url}/api/instance`;
-        this.webhook_url = `${this.card.webhook_url}/api/instances/`;
+        this.webhook_url = `${this.card.webhook_url}/api/instances`;
         this.updateStatus();
         this.loadUserInfo();
         this.getQueueMessages();
