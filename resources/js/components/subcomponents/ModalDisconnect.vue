@@ -1,7 +1,7 @@
 <template>
     <div class="modal-small modal-window fixed">
         <div class="absolute p-8 bg-white">
-            <div v-if="!loading_disconnect" class="modal-body-c pb-8">
+            <div class="modal-body-c pb-8">
                 <h3 class="mb-4 font-semibold text-base">
                     {{ __("Attention!") }}
                 </h3>
@@ -13,48 +13,42 @@
                     }}.
                 </p>
             </div>
-            <div
-                v-if="!loading_disconnect"
-                class="modal-footer flex justify-end"
-            >
+            <div class="modal-footer flex justify-end">
                 <button
                     class="btn btn-icon btn-default btn-white cursor-pointer mr-2"
-                    @click="hideModalDisconnect"
+                    @click="showModalDisconnect(false)"
                 >
                     {{ __("Cancel") }}
                 </button>
                 <button
                     class="cursor-pointer btn btn-default btn-primary"
-                    @click="disconnect"
+                    @click="change()"
                 >
-                    {{ __("Disconnect your WhatsApp") }}
+                    <span v-if="!press_button">{{
+                        __("Disconnect your WhatsApp")
+                    }}</span>
+                    <Loading v-else color="white" />
                 </button>
-            </div>
-            <div
-                v-if="loading_disconnect"
-                class="modal-loading relative w-full text-center flex justify-center items-center"
-            >
-                <div class="lds-dual-ring inline-block"></div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import CloseIcon from "vue-material-design-icons/Close.vue";
-
+import Loading from "./Loading.vue";
 export default {
-    props: ["loading_disconnect"],
-
+    props: ["showModalDisconnect", "disconnect"],
     components: {
-        CloseIcon,
+        Loading,
     },
-
+    data() {
+        return {
+            press_button: false,
+        };
+    },
     methods: {
-        hideModalDisconnect() {
-            this.$emit("hideModalDisconnect");
-        },
-        disconnect() {
-            this.$emit("disconnect");
+        change() {
+            if (!this.press_button) this.disconnect();
+            this.press_button = true;
         },
     },
 };

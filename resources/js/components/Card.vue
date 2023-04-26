@@ -1,131 +1,192 @@
 <template>
-    <card class="flex flex-col items-center justify-center">
+    <card class="flex flex-col items-center justify-center min-height-card">
         <div class="wpp-container w-full relative text-90 bg-white">
             <div class="wpp-content w-full">
                 <div class="container m-auto">
                     <div class="m-1 grid-rows-1 grid grid-flow-col gap-1">
                         <div
-                            class="row-span-1 col-span-3 bg-gray-100 rounded p-2 flex justify-between items-center"
+                            class="row-span-1 col-span-3 p-2 flex justify-between items-center"
                         >
                             <div class="flex justify-center items-center">
                                 <div
-                                    v-bind:style="{ background: device_color }"
-                                    class="flex justify-center items-center p-1 rounded-full"
+                                    class="flex justify-center items-center rounded-full relative"
                                 >
-                                    <WhatsappSvg />
+                                    <img
+                                        v-if="info_user?.imgUrl"
+                                        :src="info_user.imgUrl"
+                                        class="rounded-full"
+                                        width="50"
+                                        height="50"
+                                    />
+                                    <Bot1svg v-else />
+                                    <div
+                                        v-if="
+                                            status.accountStatus ==
+                                            'authenticated'
+                                        "
+                                        class="absolute right-0 bottom-0 rounded-full p-1 bg-white"
+                                    >
+                                        <div
+                                            class="w-2 h-2 rounded-full dot"
+                                        ></div>
+                                    </div>
                                 </div>
-                                <span class="text-90 ml-2 font-semibold">
-                                    {{ get_formated_number }}
-                                </span>
+
+                                <div class="ml-4">
+                                    <p
+                                        class="text-90 text-gray-800 text-base font-semibold"
+                                    >
+                                        {{ get_formated_number }}
+                                    </p>
+                                    <div class="my-3">
+                                        <span
+                                            class="text-sm text-gray-600 mr-1"
+                                            >{{ __("status") }}</span
+                                        >
+                                        <span
+                                            class="auth-label"
+                                            v-bind:class="[
+                                                {
+                                                    'auth-blue':
+                                                        status.accountStatus ==
+                                                        'got qr code',
+                                                    'auth-green':
+                                                        status.accountStatus ==
+                                                        'authenticated',
+                                                    'auth-yellow':
+                                                        loading ||
+                                                        status.accountStatus ==
+                                                            'loading' ||
+                                                        !status.accountStatus,
+                                                    'auth-red':
+                                                        status.accountStatus ==
+                                                        'Contact technical support',
+                                                },
+
+                                                'auth-label',
+                                            ]"
+                                            >{{ __(auth_state) }}
+
+                                            <Loading
+                                                :color="'#b98201'"
+                                                :width="'25px'"
+                                                v-if="
+                                                    loading ||
+                                                    status.accountStatus ==
+                                                        'loading'
+                                                "
+                                            />
+                                        </span>
+                                    </div>
+                                    <div v-if="show_queue_label">
+                                        <div
+                                            class="auth-label auth-red flex justify-center items-center"
+                                        >
+                                            <svg
+                                                width="15"
+                                                height="12"
+                                                viewBox="0 0 15 12"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    d="M13.8477 10.2129L8.43945 0.970703C8.21094 0.615234 7.85547 0.4375 7.5 0.4375C7.11914 0.4375 6.76367 0.615234 6.53516 0.970703L1.10156 10.2129C0.720703 10.9238 1.22852 11.8125 2.06641 11.8125H12.9082C13.7461 11.8125 14.2539 10.9238 13.8477 10.2129ZM2.32031 10.5938L7.47461 1.7832L12.6543 10.5938H2.32031ZM7.5 8.20703C7.04297 8.20703 6.6875 8.5625 6.6875 8.99414C6.6875 9.42578 7.04297 9.78125 7.5 9.78125C7.93164 9.78125 8.28711 9.42578 8.28711 8.99414C8.28711 8.5625 7.93164 8.20703 7.5 8.20703ZM6.89062 4.29688V6.73438C6.89062 7.08984 7.14453 7.34375 7.5 7.34375C7.83008 7.34375 8.10938 7.08984 8.10938 6.73438V4.29688C8.10938 3.9668 7.83008 3.6875 7.5 3.6875C7.14453 3.6875 6.89062 3.9668 6.89062 4.29688Z"
+                                                    fill="#ED3833"
+                                                />
+                                            </svg>
+
+                                            <span class="mx-15"
+                                                >{{ __("You have") }}
+                                                <span class="font-bold">{{
+                                                    cant_queue_messages
+                                                }}</span>
+                                                {{ __("queue messages") }}</span
+                                            >
+
+                                            <a
+                                                @click="showModalMessagesQueue"
+                                                class="font-bold cursor-pointer"
+                                            >
+                                                {{ __("delete messages") }}</a
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="flex justify-center items-center">
-                                <span
-                                    v-if="
-                                        status.accountStatus !=
-                                        'Contact technical support'
-                                    "
-                                    class="text-90 capitalize"
-                                >
-                                    {{ __("status") }}:&nbsp;
-                                </span>
-                                <p
-                                    v-bind:class="[
-                                        {
-                                            'auth-green':
-                                                status.accountStatus ==
-                                                'authenticated',
-                                            'auth-yellow':
-                                                loading ||
-                                                status.accountStatus ==
-                                                    'loading' ||
-                                                !status.accountStatus,
-                                            'auth-red':
-                                                status.accountStatus ==
-                                                'Contact technical support',
-                                        },
-                                        'uppercase',
-                                        'auth-label',
-                                        'whitespace-nowrap',
-                                    ]"
-                                >
-                                    {{ __(auth_state) }}
-
-                                    <loading
-                                        v-if="
-                                            loading ||
-                                            status.accountStatus == 'loading' ||
-                                            !status.accountStatus
-                                        "
-                                        :color="'#b98201'"
-                                    />
-                                </p>
-
-                                <action-button
+                                <disconect-button
                                     v-if="shown_buttons"
-                                    :action="showModalMessagesQueue"
-                                    :icon="'stackoverflow-icon'"
-                                    :title="'Messages Queue'"
-                                    :cant_queue_messages="cant_queue_messages"
-                                    :is_expired="is_expired"
+                                    :showModalDisconnect="showModalDisconnect"
                                 />
-
-                                <action-button
-                                    v-if="shown_buttons"
-                                    :action="showModalDisconnect"
-                                    :icon="'logout-icon'"
-                                    :title="'Disconnect your WhatsApp'"
-                                    :is_expired="is_expired"
+                                <connect-button
+                                    v-if="shown_connect_button"
+                                    :showModalChoose="showModalChoose"
                                 />
                             </div>
                         </div>
                     </div>
-                    <div v-if="show_body" class="body text-90 p-1 m-1">
-                        <StatusQR
-                            v-if="status.qrCode || status.on"
-                            :status="status"
-                            :startInterval="updateStatus"
-                            :suspended_qr="suspended_qr"
-                        />
-                        <StatusNotPaid v-else :status="status" />
-                    </div>
                 </div>
             </div>
-            <!-- Modal for queue history -->
-            <ModalMessagesQueue
-                v-if="show_modal_messages_queue"
-                :cant_queue_messages="cant_queue_messages"
-                @hideModalMessagesQueue="hideModalMessagesQueue"
-                @clearMessagesQueue="clearMessagesQueue"
-            />
 
-            <!-- Modal for disconnect-->
-            <ModalDisconnect
-                v-if="show_modal_disconnect"
-                @hideModalDisconnect="hideModalDisconnect"
-                @disconnect="disconnect"
-            />
+            <Transition name="fade" mode="out-in">
+                <!-- Modal for queue history -->
+                <ModalMessagesQueue
+                    v-if="show_modal_messages_queue"
+                    :cant_queue_messages="cant_queue_messages"
+                    :showModalMessagesQueue="showModalMessagesQueue"
+                    :clearMessagesQueue="clearMessagesQueue"
+                />
+
+                <!-- Modal for disconnect-->
+                <ModalDisconnect
+                    v-if="show_modal_disconnect"
+                    :showModalDisconnect="showModalDisconnect"
+                    :disconnect="disconnect"
+                />
+
+                <!-- Modal for connect-->
+                <ModalConnect
+                    v-if="show_modal_connect"
+                    :status="status"
+                    :startInterval="updateStatus"
+                    :suspended_qr="suspended_qr"
+                    :showModalConnect="showModalConnect"
+                    :loading="loading"
+                    :video="video"
+                />
+
+                <!-- Modal for choose-->
+                <ModalChoose
+                    v-if="show_modal_choose"
+                    :status="status"
+                    :startInterval="updateStatus"
+                    :suspended_qr="suspended_qr"
+                    :showModalChoose="showModalChoose"
+                    :choose="choose"
+                />
+            </Transition>
         </div>
     </card>
 </template>
 
 <script>
-import WhatsappSvg from "./subcomponents/WhatsappSvg.vue";
-import "vue-material-design-icons/styles.css";
 //Components status
-import StatusNotPaid from "./subcomponents/StatusNotPaid";
-import StatusQR from "./subcomponents/StatusQR";
-import ActionButton from "./subcomponents/ActionButton.vue";
+import Bot1svg from "./subcomponents/bot1Svg.vue";
+import Bot2svg from "./subcomponents/bot2Svg.vue";
+import ConnectButton from "./subcomponents/ConnectButton.vue";
+import DisconectButton from "./subcomponents/DisconectButton.vue";
 import Loading from "./subcomponents/Loading.vue";
 
 //Modal
 import ModalMessagesQueue from "./subcomponents/ModalMessagesQueue";
 import ModalDisconnect from "./subcomponents/ModalDisconnect";
+import ModalConnect from "./subcomponents/ModalConnect";
+import ModalChoose from "./subcomponents/ModalChoose";
 
 export default {
     props: ["card", "resource"],
 
     mounted() {
-        this.$parent.$el.classList.remove("min-h-40");
         this.supplier = this.card.supplier;
         this.instance_code = this.card.instance_code;
         this.device_alias = this.card.device_alias;
@@ -139,13 +200,14 @@ export default {
         this.official_status = this.card.official_status;
         this.wapi_url = `${this.card.wapi_url}/api/instance`;
         this.webhook_url = `${this.card.webhook_url}/api/instances`;
-        this.updateStatus();
+        this.getStatus();
         this.loadUserInfo();
         this.getQueueMessages();
     },
 
     data() {
         return {
+            video: "android",
             supplier: "",
             admin_view: false,
             qr_call_number: 0,
@@ -169,17 +231,21 @@ export default {
             is_expired: false,
             show_modal_disconnect: false,
             show_modal_messages_queue: false,
+            show_modal_connect: false,
+            show_modal_choose: false,
             cant_queue: 0,
         };
     },
 
     components: {
-        StatusNotPaid,
-        StatusQR,
-        WhatsappSvg,
-        ActionButton,
+        Bot1svg,
+        Bot2svg,
+        ConnectButton,
+        DisconectButton,
         ModalMessagesQueue,
         ModalDisconnect,
+        ModalConnect,
+        ModalChoose,
         Loading,
     },
 
@@ -194,7 +260,7 @@ export default {
 
         get_formated_number() {
             if (this.show_alias && this.show_number) {
-                return `${this.device_alias} (+${this.device_number})`;
+                return `+${this.device_number} (${this.device_alias})`;
             } else if (this.show_number) {
                 return `+${this.device_number}`;
             } else {
@@ -209,7 +275,6 @@ export default {
                         return "Initialize";
                         break;
                     case "got qr code":
-                        this.controlShowBody("open");
                         return "Scan QR Code";
                         break;
                     default:
@@ -224,113 +289,49 @@ export default {
             return this.cant_queue;
         },
 
+        show_queue_label() {
+            return this.cant_queue > 0;
+        },
+
         shown_buttons() {
             return this.status.accountStatus == "authenticated";
+        },
+
+        shown_connect_button() {
+            return this.status.accountStatus == "got qr code";
         },
     },
 
     methods: {
-        async updateStatus(restart_qr = false, on = false) {
-            if (restart_qr) {
-                this.status = {};
-                this.suspended_qr = false;
+        choose(choice) {
+            this.video = choice;
+            this.updateStatus(true, this.status.on || false);
+            this.showModalChoose(false);
+            this.showModalConnect(true);
+        },
+
+        showAlert(msg, type) {
+            Nova[type](`${this.__(msg)}`);
+        },
+
+        showModalMessagesQueue(value) {
+            this.show_modal_messages_queue = value;
+        },
+
+        showModalDisconnect(value) {
+            this.show_modal_disconnect = value;
+        },
+
+        showModalConnect(value) {
+            if (!value) {
+                clearInterval(this.interval_status);
             }
-            await Nova.request()
-                .get(`${this.webhook_url}/${this.device_id}/status?token=${this.token}`, {
-                    params: { on },
-                })
-                .then(({ data }) => {
-                    if (
-                        data.error ||
-                        (data.message && data.message.includes("is stopped"))
-                    ) {
-                        this.loading = false;
-                        this.controlShowBody("open");
-                        this.status = {
-                            accountStatus: "Contact technical support",
-                            statusData: {
-                                msg: "Please contact the customer service staff so that they can restart your instance and we apologize for the inconvenience",
-                            },
-                        };
-                    } else if (data.accountStatus == "Expired plan") {
-                        this.loading = false;
-                        this.is_expired = true;
-                        this.controlShowBody("open");
-                        this.status = {
-                            accountStatus: data.accountStatus,
-                            statusData: {
-                                msg: "Your plan has expired, make a payment to continue using the service",
-                            },
-                        };
-                    } else {
-                        if (
-                            data.accountStatus ==
-                            "To continue sending a message, you must subscribe to this instance again"
-                        ) {
-                            this.qr_call_number = 0;
-                            this.suspended_qr = true;
-                            data.accountStatus = "got qr code";
-                            data.on = true;
-                        } else if (data.accountStatus == "got qr code") {
-                            if (this.qr_call_number >= 5) {
-                                this.qr_call_number = 0;
-                                this.suspended_qr = true;
-                                clearInterval(this.interval_status);
-                            } else if (this.qr_call_number == 0) {
-                                this.interval_status = setInterval(() => {
-                                    this.updateStatus();
-                                }, 6000);
-                                this.qr_call_number++;
-                            } else {
-                                this.qr_call_number++;
-                                this.suspended_qr = false;
-                            }
-                        } else {
-                            this.qr_call_number = 0;
-                        }
-
-                        if (
-                            this.status &&
-                            this.status.accountStatus &&
-                            this.status.accountStatus != data.accountStatus
-                        ) {
-                            this.loadUserInfo();
-                        }
-
-                        this.status = data;
-                        this.loading = false;
-                    }
-                })
-                .catch((err) => {
-                    this.loading = false;
-                    this.controlShowBody("open");
-                    this.status = {
-                        accountStatus: "Contact technical support",
-                        statusData: {
-                            msg: "Please contact the customer service staff so that they can restart your instance and we apologize for the inconvenience",
-                        },
-                    };
-                });
+            this.show_modal_connect = value;
         },
 
-        showModalMessagesQueue() {
-            console.log("WEP 1");
-            this.show_modal_messages_queue = true;
-        },
-
-        hideModalMessagesQueue() {
-            console.log("WEP 2");
-            this.show_modal_messages_queue = false;
-        },
-
-        showModalDisconnect() {
-            console.log("WEP 3");
-            this.show_modal_disconnect = true;
-        },
-
-        hideModalDisconnect() {
-            console.log("WEP 4");
-            this.show_modal_disconnect = false;
+        showModalChoose(value) {
+            if (!value) clearInterval(this.interval_status);
+            this.show_modal_choose = value;
         },
 
         getQueueMessages() {
@@ -370,7 +371,7 @@ export default {
                         this.showAlert("Disconnected successfully", "success");
                         this.loading = true;
                         this.status = { accountStatus: "loading" };
-                        this.updateStatus();
+                        this.getStatus();
                     } else {
                         this.showAlert("There was an error", "error");
                     }
@@ -411,34 +412,163 @@ export default {
                 });
         },
 
-        showAlert(msg, type) {
-            this.$toasted.show(`${this.__(msg)}.`, { duration: 10000, type });
+        async getStatus() {
+            this.loading = true;
+            await Nova.request()
+
+                .get(
+                    `${this.webhook_url}${this.instance_code}/status?token=${this.token}`,
+                    {
+                        params: { on: false },
+                    }
+                )
+                .then(({ data }) => {
+                    if (
+                        data.error ||
+                        (data.message && data.message.includes("is stopped"))
+                    ) {
+                        this.loading = false;
+
+                        this.status = {
+                            accountStatus: "Contact technical support",
+                            statusData: {
+                                msg: "Please contact the customer service staff so that they can restart your instance and we apologize for the inconvenience",
+                            },
+                        };
+                    } else if (data.accountStatus == "Expired plan") {
+                        this.loading = false;
+                        this.is_expired = true;
+
+                        this.status = {
+                            accountStatus: data.accountStatus,
+                            statusData: {
+                                msg: "Your plan has expired, make a payment to continue using the service",
+                            },
+                        };
+                    } else {
+                        if (
+                            data.accountStatus ==
+                            "To continue sending a message, you must subscribe to this instance again"
+                        ) {
+                            this.suspended_qr = true;
+                            data.accountStatus = "got qr code";
+                            data.on = true;
+                        } else if (data.accountStatus == "got qr code") {
+                            this.suspended_qr = true;
+                        } else {
+                            this.showModalConnect(false);
+                        }
+
+                        if (
+                            this.status &&
+                            this.status.accountStatus &&
+                            this.status.accountStatus != data.accountStatus
+                        ) {
+                            this.loadUserInfo();
+                        }
+
+                        this.status = data;
+                        this.loading = false;
+                    }
+                })
+                .catch((err) => {
+                    this.loading = false;
+                    this.status = {
+                        accountStatus: "Contact technical support",
+                        statusData: {
+                            msg: "Please contact the customer service staff so that they can restart your instance and we apologize for the inconvenience",
+                        },
+                    };
+                });
         },
 
-        showBody() {
-            this.show_body = true;
-            localStorage.setItem(`device-${this.device_id}`, "open");
-        },
-
-        hideBody() {
-            this.show_body = false;
-            localStorage.setItem(`device-${this.device_id}`, "hide");
-        },
-
-        controlShowBody(value = null) {
-            const local_value = localStorage.getItem(
-                `device-${this.device_id}`
-            );
-            if (value) {
-                if (local_value == "open" || local_value == "hide") {
-                    this.show_body = local_value == "open" ? true : false;
-                } else {
-                    this.show_body = value == "open" ? true : false;
-                    localStorage.setItem(`device-${this.device_id}`, value);
-                }
-            } else {
-                localStorage.removeItem(`device-${this.device_id}`);
+        async updateStatus(restart_qr = false, on = false) {
+            this.loading = true;
+            if (restart_qr) {
+                this.status = {};
+                this.suspended_qr = false;
             }
+            await Nova.request()
+
+                .get(
+                    `${this.webhook_url}${this.instance_code}/status?token=${this.token}`,
+                    {
+                        params: { on },
+                    }
+                )
+                .then(({ data }) => {
+                    if (
+                        data.error ||
+                        (data.message && data.message.includes("is stopped"))
+                    ) {
+                        this.loading = false;
+
+                        this.status = {
+                            accountStatus: "Contact technical support",
+                            statusData: {
+                                msg: "Please contact the customer service staff so that they can restart your instance and we apologize for the inconvenience",
+                            },
+                        };
+                    } else if (data.accountStatus == "Expired plan") {
+                        this.loading = false;
+                        this.is_expired = true;
+
+                        this.status = {
+                            accountStatus: data.accountStatus,
+                            statusData: {
+                                msg: "Your plan has expired, make a payment to continue using the service",
+                            },
+                        };
+                    } else {
+                        if (
+                            data.accountStatus ==
+                            "To continue sending a message, you must subscribe to this instance again"
+                        ) {
+                            this.qr_call_number = 0;
+                            this.suspended_qr = true;
+                            data.accountStatus = "got qr code";
+                            data.on = true;
+                        } else if (data.accountStatus == "got qr code") {
+                            if (this.qr_call_number >= 5) {
+                                this.qr_call_number = 0;
+                                this.suspended_qr = true;
+                                clearInterval(this.interval_status);
+                            } else if (this.qr_call_number == 0) {
+                                this.interval_status = setInterval(() => {
+                                    this.updateStatus();
+                                }, 6000);
+                                this.qr_call_number++;
+                            } else {
+                                this.qr_call_number++;
+                                this.suspended_qr = false;
+                            }
+                        } else {
+                            this.showModalConnect(false);
+                            this.qr_call_number = 0;
+                        }
+
+                        if (
+                            this.status &&
+                            this.status.accountStatus &&
+                            this.status.accountStatus != data.accountStatus
+                        ) {
+                            this.loadUserInfo();
+                        }
+
+                        this.status = data;
+                        this.loading = false;
+                    }
+                })
+                .catch((err) => {
+                    this.loading = false;
+
+                    this.status = {
+                        accountStatus: "Contact technical support",
+                        statusData: {
+                            msg: "Please contact the customer service staff so that they can restart your instance and we apologize for the inconvenience",
+                        },
+                    };
+                });
         },
     },
 };
