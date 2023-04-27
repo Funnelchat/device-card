@@ -20,10 +20,7 @@
                                     />
                                     <Bot1svg v-else />
                                     <div
-                                        v-if="
-                                            status.accountStatus ==
-                                            'authenticated'
-                                        "
+                                        v-if="status_authenticated"
                                         class="absolute right-0 bottom-0 rounded-full p-1 bg-white"
                                     >
                                         <div
@@ -48,33 +45,20 @@
                                             v-bind:class="[
                                                 {
                                                     'auth-blue':
-                                                        status.accountStatus ==
-                                                        'got qr code',
+                                                        status_got_qr_code,
                                                     'auth-green':
-                                                        status.accountStatus ==
-                                                        'authenticated',
+                                                        status_authenticated,
                                                     'auth-yellow':
-                                                        loading ||
-                                                        status.accountStatus ==
-                                                            'loading' ||
-                                                        !status.accountStatus,
-                                                    'auth-red':
-                                                        status.accountStatus ==
-                                                        'Contact technical support',
+                                                        status_loading,
+                                                    'auth-red': status_error,
                                                 },
-
                                                 'auth-label',
                                             ]"
                                             >{{ __(auth_state) }}
-
                                             <Loading
                                                 :color="'#b98201'"
                                                 :width="'25px'"
-                                                v-if="
-                                                    loading ||
-                                                    status.accountStatus ==
-                                                        'loading'
-                                                "
+                                                v-if="status_loading"
                                             />
                                         </span>
                                     </div>
@@ -82,19 +66,7 @@
                                         <div
                                             class="auth-label auth-red flex justify-center items-center"
                                         >
-                                            <svg
-                                                width="15"
-                                                height="12"
-                                                viewBox="0 0 15 12"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    d="M13.8477 10.2129L8.43945 0.970703C8.21094 0.615234 7.85547 0.4375 7.5 0.4375C7.11914 0.4375 6.76367 0.615234 6.53516 0.970703L1.10156 10.2129C0.720703 10.9238 1.22852 11.8125 2.06641 11.8125H12.9082C13.7461 11.8125 14.2539 10.9238 13.8477 10.2129ZM2.32031 10.5938L7.47461 1.7832L12.6543 10.5938H2.32031ZM7.5 8.20703C7.04297 8.20703 6.6875 8.5625 6.6875 8.99414C6.6875 9.42578 7.04297 9.78125 7.5 9.78125C7.93164 9.78125 8.28711 9.42578 8.28711 8.99414C8.28711 8.5625 7.93164 8.20703 7.5 8.20703ZM6.89062 4.29688V6.73438C6.89062 7.08984 7.14453 7.34375 7.5 7.34375C7.83008 7.34375 8.10938 7.08984 8.10938 6.73438V4.29688C8.10938 3.9668 7.83008 3.6875 7.5 3.6875C7.14453 3.6875 6.89062 3.9668 6.89062 4.29688Z"
-                                                    fill="#ED3833"
-                                                />
-                                            </svg>
-
+                                            <Exclamationsvg />
                                             <span class="mx-15"
                                                 >{{ __("You have") }}
                                                 <span class="font-bold">{{
@@ -102,12 +74,11 @@
                                                 }}</span>
                                                 {{ __("queue messages") }}</span
                                             >
-
                                             <a
                                                 @click="showModalMessagesQueue"
                                                 class="font-bold cursor-pointer"
                                             >
-                                                {{ __("delete messages") }}</a
+                                                {{ __("view messages") }}</a
                                             >
                                         </div>
                                     </div>
@@ -115,11 +86,11 @@
                             </div>
                             <div class="flex justify-center items-center">
                                 <disconect-button
-                                    v-if="shown_buttons"
+                                    v-if="status_authenticated"
                                     :showModalDisconnect="showModalDisconnect"
                                 />
                                 <connect-button
-                                    v-if="shown_connect_button"
+                                    v-if="status_got_qr_code"
                                     :showModalChoose="showModalChoose"
                                 />
                             </div>
@@ -135,6 +106,7 @@
                     :cant_queue_messages="cant_queue_messages"
                     :showModalMessagesQueue="showModalMessagesQueue"
                     :clearMessagesQueue="clearMessagesQueue"
+                    :queue_messages="queue_messages"
                 />
 
                 <!-- Modal for disconnect-->
@@ -171,8 +143,8 @@
 
 <script>
 //Components status
-import Bot1svg from "./subcomponents/bot1Svg.vue";
-import Bot2svg from "./subcomponents/bot2Svg.vue";
+import Bot1svg from "./subcomponents/svg/bot1.vue";
+import Exclamationsvg from "./subcomponents/svg/exclamation.vue";
 import ConnectButton from "./subcomponents/ConnectButton.vue";
 import DisconectButton from "./subcomponents/DisconectButton.vue";
 import Loading from "./subcomponents/Loading.vue";
@@ -187,17 +159,12 @@ export default {
     props: ["card", "resource"],
 
     mounted() {
-        this.supplier = this.card.supplier;
         this.instance_code = this.card.instance_code;
         this.device_alias = this.card.device_alias;
-        this.device_color = this.card.device_color || "#38c172";
         this.token = this.card.token;
-        this.device_id = this.card.device_id;
         this.device_number = this.card.device_number;
-        this.admin_view = this.card.admin_view;
         this.status = {};
         this.suspended_qr = false;
-        this.official_status = this.card.official_status;
         this.wapi_url = `${this.card.wapi_url}/api/instance`;
         this.webhook_url = `${this.card.webhook_url}/api/instances`;
         this.getStatus();
@@ -208,17 +175,12 @@ export default {
     data() {
         return {
             video: "android",
-            supplier: "",
-            admin_view: false,
             qr_call_number: 0,
             suspended_qr: false,
             instance_code: "",
             token: "",
-            device_id: "",
             device_number: "",
             device_alias: "",
-            device_color: "",
-            official_status: "",
             status: {
                 accountStatus: "loading",
             },
@@ -227,19 +189,19 @@ export default {
             webhook_url: "",
             interval_status: null,
             info_user: null,
-            show_body: false,
             is_expired: false,
             show_modal_disconnect: false,
             show_modal_messages_queue: false,
             show_modal_connect: false,
             show_modal_choose: false,
             cant_queue: 0,
+            queue_messages: [],
         };
     },
 
     components: {
         Bot1svg,
-        Bot2svg,
+        Exclamationsvg,
         ConnectButton,
         DisconectButton,
         ModalMessagesQueue,
@@ -293,12 +255,24 @@ export default {
             return this.cant_queue > 0;
         },
 
-        shown_buttons() {
+        status_got_qr_code() {
+            return this.status.accountStatus == "got qr code";
+        },
+
+        status_authenticated() {
             return this.status.accountStatus == "authenticated";
         },
 
-        shown_connect_button() {
-            return this.status.accountStatus == "got qr code";
+        status_loading() {
+            return (
+                this.status.accountStatus == "loading" ||
+                this.loading ||
+                !this.status.accountStatus
+            );
+        },
+
+        status_error() {
+            return this.status.accountStatus == "Contact technical support";
         },
     },
 
@@ -319,6 +293,7 @@ export default {
         },
 
         showModalDisconnect(value) {
+            console.log("sdflsdhfsldkfj");
             this.show_modal_disconnect = value;
         },
 
@@ -339,6 +314,7 @@ export default {
             Nova.request()
                 .get(url)
                 .then((response) => {
+                    this.queue_messages = response.data.first100;
                     this.cant_queue = response.data.totalMessages;
                 })
                 .catch((err) => {
@@ -351,10 +327,8 @@ export default {
             Nova.request()
                 .post(url)
                 .then((response) => {
-                    this.showModalMessagesQueue();
-                    setTimeout(() => {
-                        this.show_modal_messages_queue = false;
-                    }, 2000);
+                    this.getQueueMessages();
+                    this.showModalMessagesQueue(false);
                 })
                 .catch((err) => {
                     console.log(err.toString());

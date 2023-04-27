@@ -1,8 +1,8 @@
 <template>
     <div class="w-full px-1">
         <button
-            @click="showModalDisconnect"
-            class="text-xs w-full hover:bg-gray-200 active:bg-gray-300 focus:outline-none disconected py-2 px-4 inline-flex items-center justify-center"
+            @click="showModalDisconnect(true)"
+            class="text-xs w-full hover:bg-gray-200 active:bg-gray-300 focus:outline-none disconected py-2 px-4 inline-flex items-center justify-center cursor-pointer"
         >
             <!-- Tittle -->
             <span class="mr-2">{{ __("Disconnect your WhatsApp") }} </span>

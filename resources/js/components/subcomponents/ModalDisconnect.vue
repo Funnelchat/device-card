@@ -1,11 +1,15 @@
 <template>
     <div class="modal-small modal-window fixed">
-        <div class="absolute p-8 bg-white">
-            <div class="modal-body-c pb-8">
-                <h3 class="mb-4 font-semibold text-base">
+        <div class="relative modal-padding bg-white" style="width: 595px">
+            <div class="mb-6">
+                <h3 class="font-semibold text-base text-black">
                     {{ __("Attention!") }}
                 </h3>
-                <p class="text-justify">
+                <Close :close="showModalDisconnect" />
+            </div>
+
+            <div class="modal-body-c mb-8">
+                <p class="text-justify text-black text-sm">
                     {{
                         __(
                             "It will disconnect Funnelchat account from your phone. You will need to scan a QR code again"
@@ -13,15 +17,16 @@
                     }}.
                 </p>
             </div>
+
             <div class="modal-footer flex justify-end">
                 <button
-                    class="btn btn-icon btn-default btn-white cursor-pointer mr-2"
+                    class="cursor-pointer close-button hover:shadow"
                     @click="showModalDisconnect(false)"
                 >
                     {{ __("Cancel") }}
                 </button>
                 <button
-                    class="cursor-pointer btn btn-default btn-primary"
+                    class="cursor-pointer btn-default btn-primary shadow-none"
                     @click="change()"
                 >
                     <span v-if="!press_button">{{
@@ -35,11 +40,18 @@
 </template>
 <script>
 import Loading from "./Loading.vue";
+import Close from "./svg/close.vue";
 export default {
     props: ["showModalDisconnect", "disconnect"],
     components: {
+        Close,
         Loading,
     },
+
+    mounted() {
+        console.log("KSDJFHSKJDFHSKDJHFSKJDFHKSJDHF");
+    },
+
     data() {
         return {
             press_button: false,
@@ -53,62 +65,3 @@ export default {
     },
 };
 </script>
-<style lang="css" scoped>
-/* Modal styles*/
-.modal-window {
-    background-color: rgba(27, 27, 27, 0.332);
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 999;
-    transition: all 0.3s;
-}
-
-.modal-window > div {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 5px;
-}
-/* Demo Styles */
-
-.modal-small .modal-body-c {
-    overflow: visible;
-}
-.modal-loading {
-    background: #ffffff9e;
-    height: 85%;
-    margin-top: 70px;
-}
-.modal-small .modal-loading {
-    position: relative !important;
-    margin: 2em 0 2em 0;
-}
-
-.lds-dual-ring {
-    /* display: inline-block; */
-    width: 80px;
-    height: 80px;
-}
-.lds-dual-ring:after {
-    content: " ";
-    display: block;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border-radius: 50%;
-    border: 6px solid rgba(156, 156, 156, 0.795);
-    border-color: rgba(156, 156, 156, 0.795) transparent
-        rgba(156, 156, 156, 0.795) transparent;
-    animation: lds-dual-ring 1.2s linear infinite;
-}
-@keyframes lds-dual-ring {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-</style>
