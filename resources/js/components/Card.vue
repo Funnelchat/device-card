@@ -163,6 +163,7 @@ export default {
         this.device_alias = this.card.device_alias;
         this.token = this.card.token;
         this.device_number = this.card.device_number;
+        this.device_id = this.card.device_id;
         this.status = {};
         this.suspended_qr = false;
         this.wapi_url = `${this.card.wapi_url}/api/instance`;
@@ -179,6 +180,7 @@ export default {
             suspended_qr: false,
             instance_code: "",
             token: "",
+            device_id:"",
             device_number: "",
             device_alias: "",
             status: {
@@ -293,7 +295,6 @@ export default {
         },
 
         showModalDisconnect(value) {
-            console.log("sdflsdhfsldkfj");
             this.show_modal_disconnect = value;
         },
 
@@ -391,7 +392,7 @@ export default {
             await Nova.request()
 
                 .get(
-                    `${this.webhook_url}${this.instance_code}/status?token=${this.token}`,
+                    `${this.webhook_url}/${this.device_id}/status?token=${this.token}`,
                     {
                         params: { on: false },
                     }
@@ -465,7 +466,7 @@ export default {
             await Nova.request()
 
                 .get(
-                    `${this.webhook_url}${this.instance_code}/status?token=${this.token}`,
+                    `${this.webhook_url}/${this.device_id}/status?token=${this.token}`,
                     {
                         params: { on },
                     }
