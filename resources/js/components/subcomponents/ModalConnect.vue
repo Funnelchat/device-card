@@ -40,14 +40,13 @@
                             <img
                                 v-if="status.qrCode && !suspended_qr"
                                 :src="status.qrCode"
-                                width="137"
-                                height="142"
+                                width="150"
                                 alt
                             />
 
                             <Loading
                                 v-else-if="loading"
-                                style="height: 142px"
+                                style="height: 150px"
                             />
 
                             <div
@@ -58,8 +57,8 @@
                                 <img
                                     src="/qrcode.png"
                                     alt
-                                    width="137"
-                                    height="142"
+                                    width="150"
+                                    height="150"
                                 />
                                 <span class="text-xx-small text-gray-500">
                                     {{ __("Reload QR code") }}
