@@ -125,6 +125,7 @@
                     :showModalConnect="showModalConnect"
                     :loading="loading"
                     :video="video"
+                    :device_number="device_number"
                 />
 
                 <!-- Modal for choose-->
@@ -145,8 +146,8 @@
 //Components status
 import Bot1svg from "./subcomponents/svg/bot1.vue";
 import Exclamationsvg from "./subcomponents/svg/exclamation.vue";
-import ConnectButton from "./subcomponents/ConnectButton.vue";
-import DisconectButton from "./subcomponents/DisconectButton.vue";
+import ConnectButton from "./subcomponents/buttons/ConnectButton.vue";
+import DisconectButton from "./subcomponents/buttons/DisconectButton.vue";
 import Loading from "./subcomponents/Loading.vue";
 
 //Modal
@@ -180,7 +181,7 @@ export default {
             suspended_qr: false,
             instance_code: "",
             token: "",
-            device_id:"",
+            device_id: "",
             device_number: "",
             device_alias: "",
             status: {
@@ -335,6 +336,31 @@ export default {
                     console.log(err.toString());
                 });
         },
+
+        // async changeNumber() {
+        //     /**
+        //      * solicitud de eliminar device.
+        //      */
+        //     this.loading = true;
+        //     Nova.request()
+        //         .post(`/nova-vendor/wppstatus/change-number/${this.device_id}`)
+        //         .then(({ data }) => {
+        //             this.$toasted.show(data, {
+        //                 duration: 10000,
+        //                 type: "success",
+        //             });
+        //             this.status.accountStatus = "loading";
+        //             this.device_number = "";
+        //             this.updateStatus();
+        //             this.showModalChangeNumber();
+        //         })
+        //         .catch(({ response }) => {
+        //             this.$toasted.show(response.data, {
+        //                 duration: 10000,
+        //                 type: "error",
+        //             });
+        //         });
+        // },
 
         async disconnect() {
             const url = `${this.wapi_url}${this.instance_code}/logout?token=${this.token}`;

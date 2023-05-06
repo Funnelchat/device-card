@@ -1,3 +1,25 @@
+.back-button {
+  background: #f5f6f7;
+  border-radius: 2px;
+  color: #6564db;
+  position: absolute;
+  top: 28px;
+  right: 24px;
+  width: 7rem;
+}
+
+.text-xx-small{
+  font-size: xx-small;
+}
+
+.link-problems {
+  color: #6564db;
+}
+
+.link-problems:hover { 
+  color: rgb(149, 148, 220);
+}
+
 .qr-text h2 {
   padding: 15px 0px;
 }
@@ -64,8 +86,8 @@
 }
 
 .wh-card-status {
-  width: 925px;
-  height: 570px;
+  width: 998px;
+  height: 605px;
   display: flex;
   justify-content: center;
   align-items: center;
