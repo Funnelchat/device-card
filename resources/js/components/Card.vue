@@ -31,13 +31,13 @@
 
                                 <div class="ml-4">
                                     <p
-                                        class="text-90 text-gray-800 text-base font-semibold"
+                                        class="text-90 montserrat text-gray-800 text-xs md:text-base font-semibold"
                                     >
                                         {{ get_formated_number }}
                                     </p>
-                                    <div class="my-3">
+                                    <div class="my-2 md:my-3">
                                         <span
-                                            class="text-sm text-gray-600 mr-1"
+                                            class="text-xs md:text-sm text-gray-600 mr-1"
                                             >{{ __("status") }}</span
                                         >
                                         <span
@@ -69,14 +69,14 @@
                                             <Exclamationsvg />
                                             <span class="mx-15"
                                                 >{{ __("You have") }}
-                                                <span class="font-bold">{{
+                                                <span class="gilroy-bold">{{
                                                     cant_queue_messages
                                                 }}</span>
                                                 {{ __("queue messages") }}</span
                                             >
                                             <a
                                                 @click="showModalMessagesQueue"
-                                                class="font-bold cursor-pointer"
+                                                class="gilroy-bold cursor-pointer"
                                             >
                                                 {{ __("view messages") }}</a
                                             >
@@ -124,8 +124,10 @@
                     :suspended_qr="suspended_qr"
                     :showModalConnect="showModalConnect"
                     :loading="loading"
+                    :clear_loading="clear_loading"
                     :video="video"
                     :device_number="device_number"
+                    :changeNumber="changeNumber"
                 />
 
                 <!-- Modal for choose-->
@@ -168,7 +170,7 @@ export default {
         this.status = {};
         this.suspended_qr = false;
         this.wapi_url = `${this.card.wapi_url}/api/instance`;
-        this.webhook_url = `${this.card.webhook_url}/api/instances`;
+        this.webhook_url = `${this.card.webhook_url}/api`;
         this.getStatus();
         this.loadUserInfo();
         this.getQueueMessages();
@@ -188,6 +190,7 @@ export default {
                 accountStatus: "loading",
             },
             loading: true,
+            clear_loading: false,
             wapi_url: "",
             webhook_url: "",
             interval_status: null,
@@ -321,6 +324,7 @@ export default {
                 })
                 .catch((err) => {
                     console.log(err.toString());
+                    this.showAlert("There was an error 1", "error");
                 });
         },
 
@@ -334,33 +338,9 @@ export default {
                 })
                 .catch((err) => {
                     console.log(err.toString());
+                    this.showAlert("There was an error 2", "error");
                 });
         },
-
-        // async changeNumber() {
-        //     /**
-        //      * solicitud de eliminar device.
-        //      */
-        //     this.loading = true;
-        //     Nova.request()
-        //         .post(`/nova-vendor/wppstatus/change-number/${this.device_id}`)
-        //         .then(({ data }) => {
-        //             this.$toasted.show(data, {
-        //                 duration: 10000,
-        //                 type: "success",
-        //             });
-        //             this.status.accountStatus = "loading";
-        //             this.device_number = "";
-        //             this.updateStatus();
-        //             this.showModalChangeNumber();
-        //         })
-        //         .catch(({ response }) => {
-        //             this.$toasted.show(response.data, {
-        //                 duration: 10000,
-        //                 type: "error",
-        //             });
-        //         });
-        // },
 
         async disconnect() {
             const url = `${this.wapi_url}${this.instance_code}/logout?token=${this.token}`;
@@ -374,12 +354,13 @@ export default {
                         this.status = { accountStatus: "loading" };
                         this.getStatus();
                     } else {
-                        this.showAlert("There was an error", "error");
+                        this.showAlert("There was an error3", "error");
                     }
                 })
                 .catch((err) => {
                     this.show_modal_disconnect = false;
                     console.log(err.toString());
+                    this.showAlert("There was an error 4", "error");
                 });
         },
 
@@ -388,7 +369,7 @@ export default {
             Nova.request()
                 .get(url)
                 .then((response) => {
-                    if (response.status == 200) {
+                    if (response.status == 200 && !response.data.error) {
                         this.info_user = response.data;
 
                         //Comprobación de que sea el mismo número que el guardado en la base de datos
@@ -396,20 +377,43 @@ export default {
                             this.device_number &&
                             this.device_number != this.info_user.phone
                         ) {
-                            this.$toasted.show(
+                            this.showAlert(
                                 `${this.__("wrong_number", {
                                     number: this.info_user.phone,
                                 })}`,
-                                {
-                                    duration: 50000,
-                                    type: "warning",
-                                }
+                                "error"
                             );
                         }
                     }
                 })
                 .catch((err) => {
                     console.log(err.toString());
+                    this.showAlert("There was an error 5", "error");
+                });
+        },
+
+        async changeNumber() {
+            this.clear_loading = true;
+            await clearInterval(this.interval_status);
+
+            console.log(
+                "url",
+                `${this.webhook_url}/devices/${this.device_id}/clean`
+            );
+
+            await Nova.request()
+                .post(`${this.webhook_url}/devices/${this.device_id}/clean`)
+                .then(() => {
+                    console.log("wachin!!");
+                    this.clear_loading = false;
+                    this.device_number = "";
+                    this.updateStatus(true, this.status.on || false);
+                    this.showAlert("The number was cleaned!", "success");
+                })
+                .catch(({}) => {
+                    this.clear_loading = false;
+                    console.log("wachinsdsdsdsdsds", err.toString());
+                    this.showAlert("There was an error 6", "error");
                 });
         },
 
@@ -418,7 +422,7 @@ export default {
             await Nova.request()
 
                 .get(
-                    `${this.webhook_url}/${this.device_id}/status?token=${this.token}`,
+                    `${this.webhook_url}/instances/${this.device_id}/status?token=${this.token}`,
                     {
                         params: { on: false },
                     }
@@ -486,13 +490,14 @@ export default {
         async updateStatus(restart_qr = false, on = false) {
             this.loading = true;
             if (restart_qr) {
+                this.qr_call_number = 0;
                 this.status = {};
                 this.suspended_qr = false;
             }
             await Nova.request()
 
                 .get(
-                    `${this.webhook_url}/${this.device_id}/status?token=${this.token}`,
+                    `${this.webhook_url}/instances/${this.device_id}/status?token=${this.token}`,
                     {
                         params: { on },
                     }
@@ -530,6 +535,10 @@ export default {
                             data.accountStatus = "got qr code";
                             data.on = true;
                         } else if (data.accountStatus == "got qr code") {
+
+
+
+
                             if (this.qr_call_number >= 5) {
                                 this.qr_call_number = 0;
                                 this.suspended_qr = true;
@@ -543,6 +552,11 @@ export default {
                                 this.qr_call_number++;
                                 this.suspended_qr = false;
                             }
+
+
+
+
+
                         } else {
                             this.showModalConnect(false);
                             this.qr_call_number = 0;

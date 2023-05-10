@@ -1,16 +1,16 @@
 <template>
     <div class="modal-small modal-window fixed">
         <div
-            class="relative wh-card flex items-center p-16 bg-white wh-card-status"
+            class="relative wh-card flex items-center p-16 bg-white wh-card-status overflow-y-auto overflow-x-hidden md:overflow-hide"
         >
             <BackButton :close="showModalConnect" />
 
             <div class="text-center">
-                <div class="flex items-center justify-between">
-                    <div class="qr-text p-8">
+                <div class="md:flex md:items-center md:justify-between">
+                    <div class="p-8">
                         <video
                             v-if="show_android_video"
-                            width="360"
+                            class="width-video"
                             autoplay
                             loop
                         >
@@ -23,7 +23,7 @@
 
                         <video
                             v-if="show_iphone_video"
-                            width="360"
+                            class="width-video"
                             autoplay
                             loop
                         >
@@ -35,7 +35,7 @@
                         </video>
                     </div>
 
-                    <div style="width: 465px">
+                    <div class="width-code">
                         <div class="flex items-center justify-center mb-4">
                             <img
                                 v-if="status.qrCode && !suspended_qr"
@@ -67,15 +67,20 @@
                         </div>
 
                         <div class="flex items-center justify-center mb-4">
-                            <SpanNumber :device_number="device_number" />
-                            <ChangeButton />
+                            <SpanNumber
+                                :device_number="device_number"
+                                :loading="clear_loading"
+                            />
+                            <ChangeButton :clean="changeNumber" :loading="clear_loading"/>
                         </div>
 
-                        <h3 class="mb-4 font-semibold text-2xl text-black">
+                        <h3
+                            class="mb-4 font-semibold text-lg md:text-2xl text-black"
+                        >
                             {{ __("Lee antes de escanear") }}
                         </h3>
 
-                        <p class="text-black pb-3 text-left text-sm">
+                        <p class="text-black pb-3 text-left text-help">
                             {{
                                 __(
                                     "Para comenzar a usar Funnelchat, debes vincular tu número de WhatsApp"
@@ -83,7 +88,9 @@
                             }}:
                         </p>
 
-                        <div class="text-black text-left text-sm pb-5 ml-2">
+                        <div
+                            class="text-black text-left text-help pb-5 ml-2 "
+                        >
                             <ol>
                                 <li>
                                     1. {{ __("Open WhatsApp on your phone") }}.
@@ -137,7 +144,8 @@
                         </div>
 
                         <a
-                            class="cursor-pointer font-bold text-lg link-problems"
+                            class="cursor-pointer font-bold text-sm md:text-lg link-problems montserrat"
+                            @click="openHelp()"
                         >
                             ¿Problemas para conectar?
                         </a>
@@ -162,7 +170,9 @@ export default {
         "showModalConnect",
         "video",
         "loading",
+        "clear_loading",
         "device_number",
+        "changeNumber",
     ],
 
     components: {
@@ -194,6 +204,21 @@ export default {
         disconnect() {
             this.$emit("disconnect");
         },
+
+        openHelp() {
+            $crisp.push([
+                "do",
+                "message:send",
+                [
+                    "text",
+                    "Hola!, tengo un problema al conectar mi WhatsApp a Funnelchat.",
+                ],
+            ]);
+
+            $crisp.push(["do", "chat:open"]);
+        },
+
+       
     },
 };
 </script>

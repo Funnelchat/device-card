@@ -2,7 +2,7 @@
     <div class="modal-small modal-window fixed">
         <div class="relative modal-padding bg-white" style="width: 595px">
             <div class="mb-6">
-                <h3 class="font-semibold text-base text-black">
+                <h3 class="gilroy-bold text-base text-black">
                     {{ __("Attention!") }}
                 </h3>
                 <Close :close="showModalDisconnect" />
@@ -20,13 +20,13 @@
 
             <div class="modal-footer flex justify-end">
                 <button
-                    class="cursor-pointer close-button hover:shadow"
+                    class="cursor-pointer close-button hover:shadow gilroy-bold"
                     @click="showModalDisconnect(false)"
                 >
                     {{ __("Cancel") }}
                 </button>
                 <button
-                    class="cursor-pointer btn-default btn-primary shadow-none"
+                    class="cursor-pointer btn-default btn-primary shadow-none gilroy-bold"
                     @click="change()"
                 >
                     <span v-if="!press_button">{{

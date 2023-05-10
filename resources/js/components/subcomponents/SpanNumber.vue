@@ -3,10 +3,11 @@
         class="text-xs w-full focus:outline-none disconected py-2 px-4 inline-flex items-center justify-center mr-3"
     >
         <!-- Tittle -->
-        <span class="mr-2">{{ __("Connect") }} {{ get_formated_number }}</span>
+        <span class="mr-2">{{ get_formated_number }}</span>
 
         <!-- Icon -->
         <svg
+            v-if="show_number"
             width="10"
             height="14"
             viewBox="0 0 10 14"
@@ -35,7 +36,7 @@ export default {
 
         get_formated_number() {
             if (this.show_number) {
-                return `+${this.device_number}`;
+                return `${this.__("Connect")} +${this.device_number}`;
             } else {
                 return this.__("No registered number");
             }

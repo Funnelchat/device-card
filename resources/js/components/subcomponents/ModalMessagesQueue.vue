@@ -31,13 +31,13 @@
             </div>
             <div class="modal-footer flex justify-end">
                 <button
-                    class="cursor-pointer close-button hover:shadow"
+                    class="cursor-pointer close-button hover:shadow gilroy-bold"
                     @click="showModalMessagesQueue(false)"
                 >
                     {{ __("Cancel") }}
                 </button>
                 <button
-                    class="cursor-pointer btn-default btn-primary shadow-none"
+                    class="cursor-pointer btn-default btn-primary shadow-none gilroy-bold"
                     @click="change()"
                 >
                     <span v-if="!press_button">{{ __("Clear") }}</span>

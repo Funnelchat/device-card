@@ -1,8 +1,26 @@
 <template>
-   
-        <button
-            class="text-xs w-full hover:bg-gray-200 active:bg-gray-300 focus:outline-none disconected py-2 inline-flex items-center justify-center cursor-pointer"
-        >
+    <button
+        :disabled="loading"
+        @click="clean()"
+        v-bind:class="[
+            {
+                'cursor-pointer': loading,
+                'hover:bg-gray-200': loading,
+            },
+            'text-xs',
+            'w-full',
+            'active:bg-gray-300',
+            'focus:outline-none',
+            'disconected',
+            'py-2',
+            'inline-flex',
+            'items-center',
+            'justify-center',
+        ]"
+    >
+        <Loading v-if="loading" />
+
+        <div v-else>
             <!-- Tittle -->
             <span class="mr-2">{{ __("Change number") }} </span>
 
@@ -23,11 +41,15 @@
                     fill="#6564DB"
                 />
             </svg>
-        </button>
-    
+        </div>
+    </button>
 </template>
 <script>
+import Loading from "../Loading.vue";
 export default {
-    props: [""],
+    props: ["clean", "loading"],
+    components: {
+        Loading,
+    },
 };
 </script>
