@@ -37,7 +37,7 @@
                     {{ __("Cancel") }}
                 </button>
                 <button
-                    class="cursor-pointer btn-default btn-primary shadow-none gilroy-bold"
+                    class="cursor-pointer btn-default btn-primary rounded shadow-none gilroy-bold"
                     @click="change()"
                 >
                     <span v-if="!press_button">{{ __("Clear") }}</span>

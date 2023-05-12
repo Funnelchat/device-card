@@ -324,7 +324,7 @@ export default {
                 })
                 .catch((err) => {
                     console.log(err.toString());
-                    this.showAlert("There was an error 1", "error");
+                    this.showAlert("There was an error", "error");
                 });
         },
 
@@ -338,7 +338,7 @@ export default {
                 })
                 .catch((err) => {
                     console.log(err.toString());
-                    this.showAlert("There was an error 2", "error");
+                    this.showAlert("There was an error", "error");
                 });
         },
 
@@ -354,13 +354,13 @@ export default {
                         this.status = { accountStatus: "loading" };
                         this.getStatus();
                     } else {
-                        this.showAlert("There was an error3", "error");
+                        this.showAlert("There was an error", "error");
                     }
                 })
                 .catch((err) => {
                     this.show_modal_disconnect = false;
                     console.log(err.toString());
-                    this.showAlert("There was an error 4", "error");
+                    this.showAlert("There was an error", "error");
                 });
         },
 
@@ -388,23 +388,16 @@ export default {
                 })
                 .catch((err) => {
                     console.log(err.toString());
-                    this.showAlert("There was an error 5", "error");
+                    this.showAlert("There was an error", "error");
                 });
         },
 
         async changeNumber() {
             this.clear_loading = true;
             await clearInterval(this.interval_status);
-
-            console.log(
-                "url",
-                `${this.webhook_url}/devices/${this.device_id}/clean`
-            );
-
             await Nova.request()
                 .post(`${this.webhook_url}/devices/${this.device_id}/clean`)
                 .then(() => {
-                    console.log("wachin!!");
                     this.clear_loading = false;
                     this.device_number = "";
                     this.updateStatus(true, this.status.on || false);
@@ -412,8 +405,8 @@ export default {
                 })
                 .catch(({}) => {
                     this.clear_loading = false;
-                    console.log("wachinsdsdsdsdsds", err.toString());
-                    this.showAlert("There was an error 6", "error");
+                    console.log(err.toString());
+                    this.showAlert("There was an error", "error");
                 });
         },
 
