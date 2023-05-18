@@ -4,14 +4,14 @@
             <Close :close="showModalChoose" />
 
             <div class="text-center">
-                <h3 class="mb-8 md:mb-12 gilroy-bold text-lg md:text-2xl text-black">
+                <h3 class="mb-8 md:mb-12 font-bold text-lg md:text-2xl text-black">
                     {{ __("Connect your WhatsApp") }}
                 </h3>
                 <div class="mb-4">
                     <Bot2svg />
                 </div>
 
-                <h3 class="mb-4 gilroy-bold text-lg md:text-2xl text-black">
+                <h3 class="mb-4 font-bold text-lg md:text-2xl text-black">
                     {{ __("What kind of smarthphone do you use?") }}
                 </h3>
                 <p class="text-base md:text-lg text-black">

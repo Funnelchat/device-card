@@ -69,14 +69,14 @@
                                             <Exclamationsvg />
                                             <span class="mx-15"
                                                 >{{ __("You have") }}
-                                                <span class="gilroy-bold">{{
+                                                <span class="font-bold">{{
                                                     cant_queue_messages
                                                 }}</span>
                                                 {{ __("queue messages") }}</span
                                             >
                                             <a
                                                 @click="showModalMessagesQueue"
-                                                class="gilroy-bold cursor-pointer"
+                                                class="font-bold cursor-pointer"
                                             >
                                                 {{ __("view messages") }}</a
                                             >
@@ -331,7 +331,7 @@ export default {
         clearMessagesQueue() {
             const url = `${this.wapi_url}${this.instance_code}/clearMessagesQueue?token=${this.token}`;
             Nova.request()
-                .post(url)
+                .delete(url)
                 .then((response) => {
                     this.getQueueMessages();
                     this.showModalMessagesQueue(false);

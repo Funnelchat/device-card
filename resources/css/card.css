@@ -1,16 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
 
-
-@font-face {
-  font-family: 'Gilroy-Medium';
-  src: url('Gilroy-Medium.ttf');
-}
-
-@font-face {
-  font-family: 'Gilroy-Bold';
-  src: url('Gilroy-Bold.ttf');
-}
-
 .back-button {
   background: #f5f6f7;
   border-radius: 2px;
@@ -94,11 +83,6 @@
   height: 58px;
   width: 202px;
 }
-
-
-
-
-
 
 .wh-card-status {
   width: 998px;
@@ -185,12 +169,7 @@ color: #6564DB;
   font-family: 'Montserrat', sans-serif;
 }
 
-.gilroy-bold {
-    font-family: 'Gilroy-Bold' !important;
-}
-
 @media (max-width: 768px) {
-
 
   .text-help{
     font-size: 0.75rem; 
@@ -502,9 +481,7 @@ color: #6564DB;
 
 
 
-html {
-  font-family: 'Gilroy-Medium' !important;
-}
+
 
 .card {
   /* white */

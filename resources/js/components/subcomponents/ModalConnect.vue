@@ -55,7 +55,7 @@
                                 class="cursor-pointer hover:shadow-lg"
                             >
                                 <img
-                                    src="/qrcode.png"
+                                    src="https://funnelchat-app-elements.s3.amazonaws.com/qrcode.png"
                                     alt
                                     width="150"
                                     height="150"
